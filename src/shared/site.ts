@@ -13,7 +13,7 @@ if (nav) {
   nav.innerHTML = `
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container">
-      <a class="navbar-brand" href="${root}">Scot McCombie</a>
+      <a class="navbar-brand" href="${root}">Scot McCombie: B01812843</a>
       <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navMenu">
         <span class="navbar-toggler-icon"></span>
       </button>
