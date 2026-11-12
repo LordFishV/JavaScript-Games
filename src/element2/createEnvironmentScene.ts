@@ -13,8 +13,11 @@ import {
   HemisphericLight,
   DirectionalLight,
   PhotoDome,
+  PBRMaterial,
 } from "@babylonjs/core";
 import { assetUrl } from "../shared/assetUrl";
+import "@babylonjs/loaders/glTF"; // registers the glTF loader, still required
+import { LoadAssetContainerAsync, TransformNode } from "@babylonjs/core";
 
 export default function createEnvironmentScene(engine: Engine) {
   const scene = new Scene(engine);
@@ -22,10 +25,13 @@ export default function createEnvironmentScene(engine: Engine) {
   // 360-degree background image (equirectangular panorama, 2:1 ratio)
   new PhotoDome(
     "sky",
-    assetUrl("assets/element2/sky360.jpg"),
+    assetUrl("assets/element2/sky360.hdr"),
     { resolution: 32, size: 1000 },
     scene
   );
+
+
+  // -------------------------------------------------------------- Camera controlls (Mouse and Keyboard)
 
   // Constrained camera
   const camera = new ArcRotateCamera(
@@ -51,22 +57,31 @@ export default function createEnvironmentScene(engine: Engine) {
 
   // Textured terrain from a greyscale heightmap
   const terrainMat = new StandardMaterial("terrainMat", scene);
-  const grass = new Texture(assetUrl("assets/element2/grass.jpg"), scene);
-  grass.uScale = 20;
-  grass.vScale = 20;
-  terrainMat.diffuseTexture = grass;
+  // Colour map from Gaea: one texture covering the whole terrain
+  terrainMat.diffuseTexture = new Texture(assetUrl("assets/element2/colour.png"), scene);
+  // Normal map from Gaea: adds fine surface detail to the lighting
+  terrainMat.bumpTexture = new Texture(assetUrl("assets/element2/normalmap.png"), scene);
+  terrainMat.invertNormalMapX = true;
+  terrainMat.invertNormalMapY = true;
   terrainMat.specularColor = Color3.Black();
+
+
+  // -------------------------------------------------------------- Greate the ground using the heightmap found in assets/element2.
 
   const terrain = MeshBuilder.CreateGroundFromHeightMap(
     "terrain",
     assetUrl("assets/element2/heightmap.png"),
     {
-      width: 100,
-      height: 100,
-      subdivisions: 100,
-      minHeight: 0,
-      maxHeight: 8,
-      onReady: (ground) => populate(scene, ground), // heights exist once this fires
+      width: 50,           // Width of terrain in world (x)
+      height: 50,          // Height of terrain in world (z)
+      subdivisions: 100,    // Grid resolution (Increases the poly conts that make up the terain)
+      minHeight: 0,         // Height for black pixels
+      maxHeight: 32,        // Height for white pixels
+      onReady: (ground) => 
+      {
+        scatterObject(scene, ground, "assets/element2/tree.glb", "tree", 360, 240);
+        scatterObject(scene, ground, "assets/element2/horse.glb", "horse", 30);
+      }
     },
     scene
   );
@@ -75,41 +90,60 @@ export default function createEnvironmentScene(engine: Engine) {
   return { scene, camera, terrain };
 }
 
-function populate(scene: Scene, terrain: GroundMesh) {
-  const mat = new StandardMaterial("propMat", scene);
-  mat.diffuseTexture = new Texture(assetUrl("assets/element2/rock.jpg"), scene);
+// -------------------------------------------------------------- Spawn srea of all objects in level (not including terrain) 
 
-  // Individual mesh + clone + instances
-  const base = MeshBuilder.CreateBox("base", { size: 2 }, scene);
-  base.material = mat;
-  place(base, terrain, 0, 0);
+// Returns the world-space area trees may spawn in, kept away from the edges
+function getSpawnArea(terrain: GroundMesh) {
+  terrain.computeWorldMatrix(true); // make sure any scaling is applied first
+  const { minimumWorld: min, maximumWorld: max } =
+    terrain.getBoundingInfo().boundingBox;
 
-  const clone = base.clone("clone"); // independent copy
-  place(clone, terrain, 10, 5);
+  const marginX = (max.x - min.x) * 0.1; // keep 10% in from each edge
+  const marginZ = (max.z - min.z) * 0.1;
 
-  for (let i = 0; i < 20; i++) {
-    const inst = base.createInstance("inst" + i); // cheap, shares geometry
-    place(inst, terrain, Math.random() * 80 - 40, Math.random() * 80 - 40);
-  }
-
-  // Mesh merging: combine pieces into one mesh (one draw call)
-  const pieces: Mesh[] = [];
-  for (let i = 0; i < 6; i++) {
-    const wall = MeshBuilder.CreateBox(
-      "wall" + i,
-      { width: 2, height: 3, depth: 0.5 },
-      scene
-    );
-    wall.material = mat;
-    wall.position.set(-20 + i * 2, terrain.getHeightAtCoordinates(-20 + i * 2, -20) + 1.5, -20);
-    pieces.push(wall);
-  }
-  const merged = Mesh.MergeMeshes(pieces, true, true); // disposes the originals
-  if (merged) merged.name = "mergedWall";
+  return {
+    minX: min.x + marginX,
+    maxX: max.x - marginX,
+    minZ: min.z + marginZ,
+    maxZ: max.z - marginZ,
+  };
 }
 
-// Sit a mesh on the terrain surface
-function place(mesh: AbstractMesh, terrain: GroundMesh, x: number, z: number) {
-  const y = terrain.getHeightAtCoordinates(x, z);
-  mesh.position.set(x, y + 1, z);
+const randomBetween = (a: number, b: number) => a + Math.random() * (b - a);
+
+
+// -------------------------------------------------------------- Scatter objects on the terrain
+
+async function scatterObject(
+  scene: Scene,
+  terrain: GroundMesh,
+  assetLocation: string,
+  name: string,
+  count: number,
+  sizeReference = 160 // terrain width at which the object appears at its natural size
+) {
+  const container = await LoadAssetContainerAsync(assetUrl(assetLocation), scene);
+
+  const area = getSpawnArea(terrain);
+  const sizeFactor = (area.maxX - area.minX) / sizeReference;
+
+  for (let i = 0; i < count; i++) {
+    const xPosition = randomBetween(area.minX, area.maxX);
+    const zPosition = randomBetween(area.minZ, area.maxZ);
+
+    const entries = container.instantiateModelsToScene();
+
+    const holder = new TransformNode(`${name}${i}`, scene);
+    entries.rootNodes.forEach((node) => (node.parent = holder));
+
+    holder.position.set(xPosition, terrain.getHeightAtCoordinates(xPosition, zPosition), zPosition);
+    holder.rotation.y = Math.random() * Math.PI * 2;
+    holder.scaling.setAll((0.8 + Math.random() * 0.4) * sizeFactor);
+  }
+}
+
+// place a mesh object onto the serface of the terrain
+function place(mesh: AbstractMesh, terrain: GroundMesh, xPosition: number, zPosition: number) {
+  const yPosition = terrain.getHeightAtCoordinates(xPosition, zPosition);
+  mesh.position.set(xPosition, yPosition + 1, zPosition);
 }

@@ -134,3 +134,34 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# public
+
+# ---------- Project additions ----------
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files (shared settings are kept)
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Lockfiles from other package managers (this project uses Bun's bun.lock)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# All other env files except an example one
+.env.*
+!.env.example
+
+# Large source art that doesn't need to be in the repo (uncomment if you use it)
+# source-art/
+# gaea-exports/

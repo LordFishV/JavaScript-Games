@@ -2,6 +2,10 @@ import "../shared/site";
 import createEngine from "../shared/createEngine";
 import createScene from "./createScene";
 
-const { engine } = createEngine();
-const { scene } = createScene(engine);
-engine.runRenderLoop(() => scene.render());
+async function main() {
+  const { engine } = createEngine();
+  const { scene } = await createScene(engine); // async: Havok loads first
+  engine.runRenderLoop(() => scene.render());
+}
+
+main().catch(console.error);

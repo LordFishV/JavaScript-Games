@@ -1,2 +1,40 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Normalise line endings to LF. Your project sits on a Windows drive and runs
+# in a Linux container, so this prevents CRLF/LF mix-ups and noisy diffs.
+* text=auto eol=lf
+
+# Text files
+*.ts text
+*.js text
+*.json text
+*.html text
+*.css text
+*.md text
+*.gltf text
+bun.lock text
+
+# Binary files: never convert or diff these as text
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.hdr binary
+*.exr binary
+*.env binary
+*.dds binary
+*.ktx2 binary
+*.glb binary
+*.bin binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.wasm binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.lockb binary
+
+# Optional: Git LFS for large assets (see notes below)
+# *.png filter=lfs diff=lfs merge=lfs -text
+# *.glb filter=lfs diff=lfs merge=lfs -text
+# *.hdr filter=lfs diff=lfs merge=lfs -text
