@@ -8,13 +8,28 @@ import {
   PhysicsAggregate,
   PhysicsShapeType,
   Quaternion,
-  TransformNode,
-  BodyJointParentIndex,
   Ray,
 } from "@babylonjs/core";
 import createPhysics from "./createPhysics";
 import createInput from "./createInput";
 import createPlayer from "./createPlayer";
+import createPhysicsObject from "./createPhysicsObject";
+
+// ---------- tuning values ----------
+const WALK_SPEED = 5;
+const RUN_SPEED = 10;
+const JUMP_SPEED = 10;
+const TURN_SPEED = 0.15; // how quickly the character turns to face the movement direction
+const GROUND_RAY_LENGTH = 1.2; // slightly longer than half the capsule height
+const BOX_LIFT = new Vector3(0, 1, 0);
+
+type PlayerState = "idle" | "walk" | "run" | "jump" | "falling";
+
+function pickState(grounded: boolean, moving: boolean, run: boolean, yVelocity: number): PlayerState {
+  if (!grounded) return yVelocity > 0 ? "jump" : "falling";
+  if (moving) return run ? "run" : "walk";
+  return "idle";
+}
 
 export default async function createScene(engine: Engine) {
   const scene = new Scene(engine);
@@ -34,73 +49,90 @@ export default async function createScene(engine: Engine) {
   camera.lockedTarget = player.mesh; // camera follows the player
   camera.attachControl(true);
 
-  // TODO: objects for the player to interact with. Dynamic bodies (mass > 0)
-  //       get pushed around and fall; static bodies (mass 0) stay put:
-  //       const box = MeshBuilder.CreateBox("box", { size: 1 }, scene);
-  //       new PhysicsAggregate(box, PhysicsShapeType.BOX, { mass: 1 }, scene);
+  // ---------- physics objects ----------
+  const boxes = [
+    createPhysicsObject(scene, { name: "box1", mass: 1 }),
+    createPhysicsObject(scene, { name: "box2", mass: 0.5 }),
+    createPhysicsObject(scene, { name: "box3", mass: 10 }),
+  ];
 
-  let currentState = "";
-
-  function setState(next: string) {
-  if (next === currentState) return;
-  console.log(next);
-  currentState = next;
-  // TODO: stop the old AnimationGroup, start the new one
+  // ---------- player state ----------
+  let currentState: PlayerState | "" = "";
+  function setState(next: PlayerState) {
+    if (next === currentState) return;
+    console.log(next);
+    currentState = next;
+    // TODO: stop the old AnimationGroup, start the new one
   }
 
+  const groundRay = new Ray(Vector3.Zero(), Vector3.Down(), GROUND_RAY_LENGTH);
 
-  // runs every frame
+  // ---------- runs every frame ----------
   scene.onBeforeRenderObservable.add(() => {
-  const x = (input.isDown("keyd") ? 1 : 0) - (input.isDown("keya") ? 1 : 0); // Right & Left
-  const z = (input.isDown("keyw") ? 1 : 0) - (input.isDown("keys") ? 1 : 0); // Forward & Back
+    // direction, relative to the camera
+    const x = (input.isDown("keyd") ? 1 : 0) - (input.isDown("keya") ? 1 : 0);
+    const z = (input.isDown("keyw") ? 1 : 0) - (input.isDown("keys") ? 1 : 0);
 
-  const forward = camera.getForwardRay().direction;   // Camera forward vector
-  forward.y = 0;                                      // Flat forward vector (Don't move the player in the direction of up or down)
-  forward.normalize();                                // Normalize forward vector to 1
-  const right = Vector3.Cross(Vector3.Up(), forward); // Camera right vector
+    const forward = camera.getForwardRay().direction;
+    forward.y = 0; // keep movement flat
+    forward.normalize();
+    const right = Vector3.Cross(Vector3.Up(), forward);
 
-  // Set movement speed
-  const walkSpeed = 5;
-  const runSpeed = 10;
+    const direction = right.scale(x).add(forward.scale(z)).normalize();
+    const moving = direction.lengthSquared() > 0;
 
-  // Movement speed and 
-  const run = (input.isDown("shiftleft"))
-  const currentSpeed = run ? runSpeed : walkSpeed;
-  const body = player.aggregate.body;
+    // movement
+    const run = input.isDown("shiftleft");
+    const speed = run ? RUN_SPEED : WALK_SPEED;
+    const body = player.aggregate.body;
+    const velocity = body.getLinearVelocity();
 
-  const current = body.getLinearVelocity();
-
-  const direction = right.scale(x).add(forward.scale(z));
-  direction.normalize();
-  body.setLinearVelocity(new Vector3(direction.x * currentSpeed, current.y, direction.z * currentSpeed));
-
-  if (direction.lengthSquared() > 0) {
-    setState(run ? "run" : "walk");
-    const target = Quaternion.FromEulerAngles(0, Math.atan2(direction.x, direction.z), 0);
-    player.visual.rotationQuaternion = Quaternion.Slerp(
-    player.visual.rotationQuaternion!, target, 0.15 // 0.15 = turn speed
+    body.setLinearVelocity(
+      new Vector3(direction.x * speed, velocity.y, direction.z * speed)
     );
-  }
-  else{
-    setState("idle"); // set idle if not moving
-  }
 
-  const origin = player.mesh.position;
-  const ray = new Ray(origin, Vector3.Down(), 1.2); // slightly longer than half the capsule height
-  const hit = scene.pickWithRay(ray, (m) => m !== player.mesh && !m.isDescendantOf(player.mesh));
-  const grounded = hit?.hit === true;
+    // ground check (ray from the player, ignoring the player's own meshes)
+    groundRay.origin.copyFrom(player.mesh.position);
+    const hit = scene.pickWithRay(
+      groundRay,
+      (m) => m !== player.mesh && !m.isDescendantOf(player.mesh)
+    );
+    const grounded = hit?.hit === true;
 
-  // Jump implementation
-  const jump = (input.isDown("space"))
-  const jumpForce = 10;
-  if (grounded && jump) {
-    body.setLinearVelocity(new Vector3(direction.x * currentSpeed, jumpForce, direction.z * currentSpeed));
-    setState("jump");
-  }
-    // TODO: pick the animation (idle / walk / run) from the current speed
+    // jump
+    const jumped = grounded && input.isDown("space");
+    if (jumped) {
+      body.setLinearVelocity(
+        new Vector3(direction.x * speed, JUMP_SPEED, direction.z * speed)
+      );
+    }
 
+    // turn the visual to face the direction of travel
+    if (moving) {
+      const target = Quaternion.FromEulerAngles(0, Math.atan2(direction.x, direction.z), 0);
+      player.visual.rotationQuaternion = Quaternion.Slerp(
+        player.visual.rotationQuaternion!, target, TURN_SPEED
+      );
+    }
 
-    
+    // pick the state once, after everything above has been decided
+    setState(
+      pickState(grounded && !jumped, moving, run, jumped ? JUMP_SPEED : velocity.y)
+    );
+
+    // E: push the boxes up, F: freeze them in place
+    if (input.isDown("keye")) {
+      for (const box of boxes) {
+        box.aggregate.body.applyImpulse(BOX_LIFT, box.mesh.getAbsolutePosition());
+      }
+    }
+    if (input.isDown("keyf")) {
+      for (const box of boxes) {
+        box.aggregate.body.setLinearVelocity(Vector3.Zero());
+        box.aggregate.body.setAngularVelocity(Vector3.Zero());
+      }
+    }
   });
+
   return { scene, camera };
 }
