@@ -162,6 +162,9 @@ pnpm-lock.yaml
 .env.*
 !.env.example
 
+# Stop glb optimizastion steps from being commited to git accedently
+step*.glb
+
 # Large source art that doesn't need to be in the repo (uncomment if you use it)
 # source-art/
 # gaea-exports/
