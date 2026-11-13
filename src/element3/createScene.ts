@@ -95,7 +95,7 @@ export default async function createScene(engine: Engine) {
     groundRay.origin.copyFrom(player.mesh.position);
     const hit = scene.pickWithRay(
       groundRay,
-      (m) => m !== player.mesh && !m.isDescendantOf(player.mesh)
+      (abstractMesh) => abstractMesh !== player.mesh && !abstractMesh.isDescendantOf(player.mesh)
     );
     const grounded = hit?.hit === true;
 
