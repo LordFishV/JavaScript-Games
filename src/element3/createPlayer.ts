@@ -2,6 +2,8 @@ import {
   MeshBuilder,
   PhysicsAggregate,
   PhysicsShapeType,
+  Quaternion,
+  TransformNode,
   Vector3,
 } from "@babylonjs/core";
 import type { Scene } from "@babylonjs/core";
@@ -20,11 +22,14 @@ export default function createPlayer(scene: Scene) {
     scene
   );
 
-  // stop the physics body tipping over when it hits things
   aggregate.body.setMassProperties({ inertia: Vector3.Zero() });
 
-  // TODO: animation groups (idle, walk, run, jump) and a small state machine
-  //       that picks which one plays based on what the player is doing
+  aggregate.body.setCollisionCallbackEnabled(true);
+  aggregate.body.getCollisionObservable();
 
-  return { mesh, aggregate };
+const visual = new TransformNode("playerVisual", scene);
+  visual.parent = mesh;
+  visual.rotationQuaternion = Quaternion.Identity();
+
+  return { mesh, visual, aggregate };
 }

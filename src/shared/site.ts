@@ -4,8 +4,7 @@ import "bootstrap";
 
 const root = document.body.dataset.root ?? "";
 
-// 
-const links = [1, 2, 3, 4, 5]
+const links = [1, 2, 3, 4, 5] // How many element
   .map((n) => `<li><a class="dropdown-item" href="${root}element${n}/">Element ${n}</a></li>`)
   .join("");
 
