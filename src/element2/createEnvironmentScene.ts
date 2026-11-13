@@ -58,9 +58,9 @@ export default function createEnvironmentScene(engine: Engine) {
   // Textured terrain from a greyscale heightmap
   const terrainMat = new StandardMaterial("terrainMat", scene);
   // Colour map from Gaea: one texture covering the whole terrain
-  terrainMat.diffuseTexture = new Texture(assetUrl("assets/element2/colour.png"), scene);
+  terrainMat.diffuseTexture = new Texture(assetUrl("assets/element2/colour.webp"), scene);
   // Normal map from Gaea: adds fine surface detail to the lighting
-  terrainMat.bumpTexture = new Texture(assetUrl("assets/element2/normalmap.png"), scene);
+  terrainMat.bumpTexture = new Texture(assetUrl("assets/element2/normalmap.webp"), scene);
   terrainMat.invertNormalMapX = true;
   terrainMat.invertNormalMapY = true;
   terrainMat.specularColor = Color3.Black();
