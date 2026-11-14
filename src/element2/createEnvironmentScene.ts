@@ -133,12 +133,12 @@ async function scatterObject(
 
     const entries = container.instantiateModelsToScene();
 
-    const holder = new TransformNode(`${name}${i}`, scene);
-    entries.rootNodes.forEach((node) => (node.parent = holder));
+    const visual = new TransformNode(`${name}${i}`, scene);
+    entries.rootNodes.forEach((node) => (node.parent = visual));
 
-    holder.position.set(xPosition, terrain.getHeightAtCoordinates(xPosition, zPosition), zPosition);
-    holder.rotation.y = Math.random() * Math.PI * 2;
-    holder.scaling.setAll((0.8 + Math.random() * 0.4) * sizeFactor);
+    visual.position.set(xPosition, terrain.getHeightAtCoordinates(xPosition, zPosition), zPosition);
+    visual.rotation.y = Math.random() * Math.PI * 2;
+    visual.scaling.setAll((0.8 + Math.random() * 0.4) * sizeFactor);
   }
 }
 

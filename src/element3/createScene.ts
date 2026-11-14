@@ -9,6 +9,8 @@ import {
   PhysicsShapeType,
   Quaternion,
   Ray,
+  PlayAnimationAction,
+  AnimationGroup,
 } from "@babylonjs/core";
 import createPhysics from "./createPhysics";
 import createInput from "./createInput";
@@ -42,11 +44,11 @@ export default async function createScene(engine: Engine) {
 
   // ground: mass 0 = static (never moves)
   const ground = MeshBuilder.CreateGround("ground", { width: 40, height: 40 }, scene);
-  new PhysicsAggregate(ground, PhysicsShapeType.BOX, { mass: 0 }, scene);
+  new PhysicsAggregate(ground, PhysicsShapeType.BOX, { mass: 0, restitution: 0}, scene);
 
   const input = createInput(scene);
-  const player = createPlayer(scene);
-  camera.lockedTarget = player.mesh; // camera follows the player
+  const player = await createPlayer(scene, "Player");
+  camera.lockedTarget = player.holder; // camera follows the player
   camera.attachControl(true);
 
   // ---------- physics objects ----------
@@ -54,16 +56,40 @@ export default async function createScene(engine: Engine) {
     createPhysicsObject(scene, { name: "box1", mass: 1 }),
     createPhysicsObject(scene, { name: "box2", mass: 0.5 }),
     createPhysicsObject(scene, { name: "box3", mass: 10 }),
+    createPhysicsObject(scene, { name: "box1", mass: 1 }),
+    createPhysicsObject(scene, { name: "box2", mass: 0.5 }),
+    createPhysicsObject(scene, { name: "box3", mass: 10 }),
+    createPhysicsObject(scene, { name: "box1", mass: 1 }),
+    createPhysicsObject(scene, { name: "box2", mass: 0.5 }),
+    createPhysicsObject(scene, { name: "box3", mass: 10 }),
+    createPhysicsObject(scene, { name: "box1", mass: 1 }),
+    createPhysicsObject(scene, { name: "box2", mass: 0.5 }),
+    createPhysicsObject(scene, { name: "box3", mass: 10 }),
   ];
 
-  // ---------- player state ----------
-  let currentState: PlayerState | "" = "";
-  function setState(next: PlayerState) {
-    if (next === currentState) return;
-    console.log(next);
-    currentState = next;
-    // TODO: stop the old AnimationGroup, start the new one
-  }
+// ---------- animations (built once) ----------
+const find = (word: string) =>
+  player.animationGroups.find((g) => g.name.toLowerCase().includes(word));
+
+const animations: Record<PlayerState, AnimationGroup | undefined> = {
+  idle: find("clone of idle"),
+  walk: find("clone of walk"),
+  run: find("clone of run"),
+  jump: find("clone of jump"),
+  falling: find("clone of fall"),
+};
+
+// ---------- player state ----------
+let currentState: PlayerState | "" = "";
+
+function setState(next: PlayerState) {
+  if (next === currentState) return;
+
+  if (currentState) animations[currentState]?.stop(); // stop the old animation
+  animations[next]?.start(next !== "jump"); // play the new animation and loop it, unless its jump (only play once)
+
+  currentState = next;
+}
 
   const groundRay = new Ray(Vector3.Zero(), Vector3.Down(), GROUND_RAY_LENGTH);
 
@@ -92,10 +118,10 @@ export default async function createScene(engine: Engine) {
     );
 
     // ground check (ray from the player, ignoring the player's own meshes)
-    groundRay.origin.copyFrom(player.mesh.position);
+    groundRay.origin.copyFrom(player.holder.position);
     const hit = scene.pickWithRay(
       groundRay,
-      (abstractMesh) => abstractMesh !== player.mesh && !abstractMesh.isDescendantOf(player.mesh)
+      (abstractMesh) => abstractMesh !== player.holder && !abstractMesh.isDescendantOf(player.holder)
     );
     const grounded = hit?.hit === true;
 
@@ -115,10 +141,9 @@ export default async function createScene(engine: Engine) {
       );
     }
 
-    // pick the state once, after everything above has been decided
-    setState(
-      pickState(grounded && !jumped, moving, run, jumped ? JUMP_SPEED : velocity.y)
-    );
+    // pick current state from inputs and set next state to it.
+    const state = pickState(grounded && !jumped, moving, run, jumped ? JUMP_SPEED : velocity.y);
+    setState(state);
 
     // E: push the boxes up, F: freeze them in place
     if (input.isDown("keye")) {
