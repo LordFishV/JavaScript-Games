@@ -4,7 +4,6 @@ import {
   ArcRotateCamera,
   Vector3,
   MeshBuilder,
-  Mesh,
   GroundMesh,
   AbstractMesh,
   StandardMaterial,
@@ -13,7 +12,6 @@ import {
   HemisphericLight,
   DirectionalLight,
   PhotoDome,
-  PBRMaterial,
 } from "@babylonjs/core";
 import { assetUrl } from "../shared/assetUrl";
 import "@babylonjs/loaders/glTF"; // registers the glTF loader, still required
@@ -79,8 +77,9 @@ export default function createEnvironmentScene(engine: Engine) {
       maxHeight: 32,        // Height for white pixels
       onReady: (ground) => 
       {
-        scatterObject(scene, ground, "assets/element2/tree.glb", "tree", 360, 240);
-        scatterObject(scene, ground, "assets/element2/horse.glb", "horse", 30);
+        scatterObject(scene, ground, "assets/element2/tree.glb", "tree", 900);
+        scatterObject(scene, ground, "assets/element2/horse.glb", "horse", 100, true);
+        scatterObject(scene, ground, "assets/element2/house.glb", "house", 50, true, 75);
       }
     },
     scene
@@ -120,12 +119,13 @@ async function scatterObject(
   assetLocation: string,
   name: string,
   count: number,
-  sizeReference = 160 // terrain width at which the object appears at its natural size
+  conformToNormal = false,
+  scale = 400 // increases the scale of the object.
 ) {
   const container = await LoadAssetContainerAsync(assetUrl(assetLocation), scene);
 
   const area = getSpawnArea(terrain);
-  const sizeFactor = (area.maxX - area.minX) / sizeReference;
+  const sizeFactor = (area.maxX - area.minX) / scale;
 
   for (let i = 0; i < count; i++) {
     const xPosition = randomBetween(area.minX, area.maxX);
@@ -133,11 +133,14 @@ async function scatterObject(
 
     const entries = container.instantiateModelsToScene();
 
-    const visual = new TransformNode(`${name}${i}`, scene);
+    const visual = new TransformNode(`${name}${i}`, scene); // ${name}${i} gives all objects numbers at the end of the name.
     entries.rootNodes.forEach((node) => (node.parent = visual));
 
     visual.position.set(xPosition, terrain.getHeightAtCoordinates(xPosition, zPosition), zPosition);
-    visual.rotation.y = Math.random() * Math.PI * 2;
+    visual.rotation.y += (Math.random() * Math.PI * 2);
+    if (conformToNormal)
+    {visual.rotation = terrain.getNormalAtCoordinates(xPosition, zPosition);}
+
     visual.scaling.setAll((0.8 + Math.random() * 0.4) * sizeFactor);
   }
 }

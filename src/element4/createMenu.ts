@@ -21,7 +21,6 @@ export default function createMenu(
   const engine = scene.getEngine();
   const audioButtons: Button[] = [];
 
-  // ---------- helpers ----------
   function makeButton(name: string, label: string, width = "220px") {
     const button = Button.CreateSimpleButton(name, label);
     button.width = width;
@@ -69,7 +68,7 @@ export default function createMenu(
     });
   }
 
-  // ---------- HUD (shown during play) ----------
+  // ---------- HUD ----------
   const hudUi = AdvancedDynamicTexture.CreateFullscreenUI("hudUi", true, scene);
   const hudRoot = new Rectangle("hudRoot");
   hudRoot.width = "100%";

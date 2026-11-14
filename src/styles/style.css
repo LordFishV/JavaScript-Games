@@ -3,3 +3,31 @@ canvas {
   outline: none;
   touch-action: none;
 }
+
+/* Opt every same-origin page navigation into view transitions */
+@view-transition {
+  navigation: auto;
+}
+
+/* Treat the old page's navbar and the new page's navbar as the same element,
+   so it stays put while the rest of the page cross-fades underneath */
+.navbar {
+  view-transition-name: site-nav;
+}
+
+/* No fade on the navbar itself, so there's no flicker between identical frames */
+::view-transition-group(site-nav),
+::view-transition-image-pair(site-nav),
+::view-transition-old(site-nav),
+::view-transition-new(site-nav) {
+  animation: none;
+}
+
+/* Optional: turn the animation off for people who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}

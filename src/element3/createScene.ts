@@ -9,7 +9,6 @@ import {
   PhysicsShapeType,
   Quaternion,
   Ray,
-  PlayAnimationAction,
   AnimationGroup,
 } from "@babylonjs/core";
 import createPhysics from "./createPhysics";
