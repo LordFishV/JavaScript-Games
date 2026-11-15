@@ -29,7 +29,7 @@ export default function createEnvironmentScene(engine: Engine) {
   );
 
 
-  // -------------------------------------------------------------- Camera controlls (Mouse and Keyboard)
+  // ---------- Camera controlls (Mouse and Keyboard)
 
   // Constrained camera
   const camera = new ArcRotateCamera(
@@ -64,7 +64,7 @@ export default function createEnvironmentScene(engine: Engine) {
   terrainMat.specularColor = Color3.Black();
 
 
-  // -------------------------------------------------------------- Greate the ground using the heightmap found in assets/element2.
+  // ---------- Greate the ground using the heightmap found in assets/element2.
 
   const terrain = MeshBuilder.CreateGroundFromHeightMap(
     "terrain",
@@ -89,7 +89,7 @@ export default function createEnvironmentScene(engine: Engine) {
   return { scene, camera, terrain };
 }
 
-// -------------------------------------------------------------- Spawn srea of all objects in level (not including terrain) 
+// ---------- Spawn srea of all objects in level (not including terrain) 
 
 // Returns the world-space area trees may spawn in, kept away from the edges
 function getSpawnArea(terrain: GroundMesh) {
@@ -111,7 +111,7 @@ function getSpawnArea(terrain: GroundMesh) {
 const randomBetween = (a: number, b: number) => a + Math.random() * (b - a);
 
 
-// -------------------------------------------------------------- Scatter objects on the terrain
+// ---------- Scatter objects on the terrain
 
 async function scatterObject(
   scene: Scene,

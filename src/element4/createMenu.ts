@@ -110,7 +110,7 @@ export default function createMenu(
   menuUi.addControl(backdrop);
 
   const panel = new StackPanel("menuPanel");
-  panel.width = "320px";
+  panel.width = "400px";
   backdrop.addControl(panel);
 
   const title = new TextBlock("title", "Element 4: GUI Demo");

@@ -1,5 +1,6 @@
-import { MeshBuilder, PhysicsAggregate, PhysicsShapeType } from "@babylonjs/core";
+import { Material, MeshBuilder, PBRMaterial, PhysicsAggregate, PhysicsShapeType, Texture, Vector3 } from "@babylonjs/core";
 import type { Scene } from "@babylonjs/core";
+import { assetUrl } from "../shared/assetUrl";
 
 export interface PhysicsObjectOptions {
   name: string;
@@ -9,12 +10,23 @@ export interface PhysicsObjectOptions {
 }
 
 export default function createPhysicsObject(
-  scene: Scene,
+  scene: Scene, textureLocation: string, textureName: string, textureType: string,
   { name, mass, friction = 0.5, restitution = 0.2 }: PhysicsObjectOptions
 ) {
   const mesh = MeshBuilder.CreateBox(name, { size: 1 }, scene);
   // start above the ground so it falls (y of at least 2 avoids spawning inside the ground)
   mesh.position.set(Math.random() * 10, 2 + Math.random() * 8, Math.random() * 10);
+
+  const mat = new PBRMaterial("physics", scene);
+  mat.albedoTexture = new Texture(assetUrl(`${textureLocation}${textureName}albedo${textureType}`));
+  mat.bumpTexture = new Texture(assetUrl(`${textureLocation}${textureName}normal${textureType}`));
+  mat.metallicTexture = new Texture(assetUrl(`${textureLocation}${textureName}aor${textureType}`));
+  mat.useAmbientOcclusionFromMetallicTextureRed;
+  mat.useRoughnessFromMetallicTextureGreen;
+  mat.metallic = 1;
+  console.log(mat.albedoTexture);
+
+  mesh.material = mat;
 
   const aggregate = new PhysicsAggregate(
     mesh,

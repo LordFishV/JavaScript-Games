@@ -19,7 +19,7 @@ import createPhysicsObject from "./createPhysicsObject";
 // ---------- tuning values ----------
 const WALK_SPEED = 5;
 const RUN_SPEED = 10;
-const JUMP_SPEED = 10;
+const JUMP_SPEED = 10;  // The speed at which the character moves 
 const TURN_SPEED = 0.15; // how quickly the character turns to face the movement direction
 const GROUND_RAY_LENGTH = 1.2; // slightly longer than half the capsule height
 const BOX_LIFT = new Vector3(0, 1, 0);
@@ -52,21 +52,21 @@ export default async function createScene(engine: Engine) {
 
   // ---------- physics objects ----------
   const boxes = [
-    createPhysicsObject(scene, { name: "box1", mass: 1 }),
-    createPhysicsObject(scene, { name: "box2", mass: 0.5 }),
-    createPhysicsObject(scene, { name: "box3", mass: 10 }),
-    createPhysicsObject(scene, { name: "box1", mass: 1 }),
-    createPhysicsObject(scene, { name: "box2", mass: 0.5 }),
-    createPhysicsObject(scene, { name: "box3", mass: 10 }),
-    createPhysicsObject(scene, { name: "box1", mass: 1 }),
-    createPhysicsObject(scene, { name: "box2", mass: 0.5 }),
-    createPhysicsObject(scene, { name: "box3", mass: 10 }),
-    createPhysicsObject(scene, { name: "box1", mass: 1 }),
-    createPhysicsObject(scene, { name: "box2", mass: 0.5 }),
-    createPhysicsObject(scene, { name: "box3", mass: 10 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box1", mass: 1 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box2", mass: 0.5 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box3", mass: 10 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box1", mass: 1 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box2", mass: 0.5 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box3", mass: 10 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box1", mass: 1 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box2", mass: 0.5 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box3", mass: 10 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box1", mass: 1 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box2", mass: 0.5 }),
+    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box3", mass: 10 }),
   ];
 
-// ---------- animations (built once) ----------
+// ---------- animations ----------
 const find = (word: string) =>
   player.animationGroups.find((g) => g.name.toLowerCase().includes(word));
 
