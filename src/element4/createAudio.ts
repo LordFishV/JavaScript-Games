@@ -18,17 +18,14 @@ export default async function createAudio(): Promise<AudioManager> {
 
   const music = await CreateSoundAsync(
     "ambient",
-    assetUrl("assets/element4/ambient.wav"),
+    assetUrl("assets/element4/ambient.mp3"),
     { loop: true, volume: 0.4 }
   );
 
-  const sfx = new Map<SfxName, StaticSound>();
-  for (const name of SFX_NAMES) {
-    sfx.set(
-      name,
-      await CreateSoundAsync(name, assetUrl(`assets/element4/${name}.wav`))
-    );
-  }
+  const entries = await Promise.all(
+    SFX_NAMES.map(async (name) => [name, await CreateSoundAsync(name, assetUrl(`assets/element4/${name}.mp3`))] as const)
+  );
+  const sfx = new Map(entries);
 
   let enabled = false;
 

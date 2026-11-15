@@ -1,19 +1,9 @@
 import type { SceneData } from "./interfaces";
 
 import {
-  Scene,
-  ArcRotateCamera,
-  Vector3,
-  MeshBuilder,
-  Mesh,
-  StandardMaterial,
-  HemisphericLight,
-  PointLight,
-  SpotLight,
-  DirectionalLight,
-  Color3,
-  ShadowGenerator,
-  Engine,
+  Scene, ArcRotateCamera, Vector3, MeshBuilder, Mesh, StandardMaterial,
+  HemisphericLight, PointLight, SpotLight, DirectionalLight, Color3,
+  ShadowGenerator, Engine,
 } from "@babylonjs/core";
 
 function createBox(scene: Scene) {

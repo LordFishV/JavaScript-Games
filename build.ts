@@ -7,7 +7,7 @@ const entrypoints = [...new Glob("**/index.html").scanSync("src")].map(
   (p) => `src/${p}`
 );
 
-const result = await Bun.build({ entrypoints, outdir: "dist", minify: true });
+const result = await Bun.build({ entrypoints, outdir: "dist", minify: true, splitting: true,});
 if (!result.success) {
   console.error(result.logs);
   process.exit(1);
