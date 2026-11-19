@@ -10,5 +10,5 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["src", "server.ts", "build.ts"]
+  "include": ["src", "tools", "server.ts", "build.ts"]
 }

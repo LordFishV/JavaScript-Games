@@ -1,0 +1,312 @@
+{
+  "element1/earthalbedo.webp": {
+    "mtimeMs": 1795125172101.4502,
+    "size": 80342,
+    "outRel": "element1/earthalbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 8320700,
+    "outMtimeMs": 1795127882219.1252
+  },
+  "element1/earthcloud.webp": {
+    "mtimeMs": 1795125172125.3376,
+    "size": 579054,
+    "outRel": "element1/earthcloud.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 11457032,
+    "outMtimeMs": 1795127903090.017
+  },
+  "element1/earthnormal.png": {
+    "mtimeMs": 1795125172139.9392,
+    "size": 298788,
+    "outRel": "element1/earthnormal.png",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 1223537,
+    "outMtimeMs": 1795127904456.0146
+  },
+  "element1/jupiteralbedo.webp": {
+    "mtimeMs": 1795125172164.5928,
+    "size": 328072,
+    "outRel": "element1/jupiteralbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 14479292,
+    "outMtimeMs": 1795127927951.5767
+  },
+  "element1/marsalbedo.webp": {
+    "mtimeMs": 1795125172186.6675,
+    "size": 546960,
+    "outRel": "element1/marsalbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 17759804,
+    "outMtimeMs": 1795127955674.3396
+  },
+  "element1/mercuryalbedo.webp": {
+    "mtimeMs": 1795125172209.884,
+    "size": 790666,
+    "outRel": "element1/mercuryalbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 16002656,
+    "outMtimeMs": 1795127982531.9492
+  },
+  "element1/moonalbedo.webp": {
+    "mtimeMs": 1795125172233.2144,
+    "size": 630994,
+    "outRel": "element1/moonalbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 24328936,
+    "outMtimeMs": 1795128011317.0664
+  },
+  "element1/neptunealbedo.webp": {
+    "mtimeMs": 1795125172251.2285,
+    "size": 85698,
+    "outRel": "element1/neptunealbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 5352510,
+    "outMtimeMs": 1795128024801.33
+  },
+  "element1/saturnalbedo.webp": {
+    "mtimeMs": 1795125172264.363,
+    "size": 96582,
+    "outRel": "element1/saturnalbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 6663476,
+    "outMtimeMs": 1795128039618.9404
+  },
+  "element1/sky360stars.webp": {
+    "mtimeMs": 1795126706928.2378,
+    "size": 33254,
+    "outRel": "element1/sky360stars.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 2355108,
+    "outMtimeMs": 1795128048890.0198
+  },
+  "element1/sunalbedo.webp": {
+    "mtimeMs": 1795125172342.8286,
+    "size": 660228,
+    "outRel": "element1/sunalbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 19347004,
+    "outMtimeMs": 1795128075578.264
+  },
+  "element1/uranusalbedo.webp": {
+    "mtimeMs": 1795125172359.459,
+    "size": 18970,
+    "outRel": "element1/uranusalbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 420490,
+    "outMtimeMs": 1795128083627.8872
+  },
+  "element1/venusalbedo.webp": {
+    "mtimeMs": 1795125172374.592,
+    "size": 122070,
+    "outRel": "element1/venusalbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 8456334,
+    "outMtimeMs": 1795128101551.4492
+  },
+  "element2/colour.webp": {
+    "mtimeMs": 1795125172401.4053,
+    "size": 325284,
+    "outRel": "element2/colour.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 14072210,
+    "outMtimeMs": 1795128117227.7375
+  },
+  "element2/heightmap.png": {
+    "mtimeMs": 1795125172432.1323,
+    "size": 1062767,
+    "outRel": "element2/heightmap.png",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 2869042,
+    "outMtimeMs": 1795128118920.1538
+  },
+  "element2/horse.glb": {
+    "mtimeMs": 1795125172469.0757,
+    "size": 1871944,
+    "outRel": "element2/horse.glb",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 1871944,
+    "outMtimeMs": 1795128119072.9314
+  },
+  "element2/house.glb": {
+    "mtimeMs": 1795125172501.5654,
+    "size": 1182016,
+    "outRel": "element2/house.glb",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 1182016,
+    "outMtimeMs": 1795128119101.246
+  },
+  "element2/normalmap.webp": {
+    "mtimeMs": 1795125172547.4255,
+    "size": 1455260,
+    "outRel": "element2/normalmap.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 3489482,
+    "outMtimeMs": 1795128122765.664
+  },
+  "element2/rockaor.webp": {
+    "mtimeMs": 1795125172579.7378,
+    "size": 1214498,
+    "outRel": "element2/rockaor.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 3058816,
+    "outMtimeMs": 1795128126693.8096
+  },
+  "element2/rockcolour.webp": {
+    "mtimeMs": 1795125172589.1472,
+    "size": 86350,
+    "outRel": "element2/rockcolour.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 7428252,
+    "outMtimeMs": 1795128138640.206
+  },
+  "element2/rocknormal.webp": {
+    "mtimeMs": 1795125172636.5874,
+    "size": 1819396,
+    "outRel": "element2/rocknormal.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 4549422,
+    "outMtimeMs": 1795128142484.0715
+  },
+  "element2/sky360.hdr": {
+    "mtimeMs": 1795125172661.2566,
+    "size": 639202,
+    "outRel": "element2/sky360.hdr",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 639202,
+    "outMtimeMs": 1795128142676.0686
+  },
+  "element2/tree.glb": {
+    "mtimeMs": 1795125172677.9722,
+    "size": 84684,
+    "outRel": "element2/tree.glb",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 84684,
+    "outMtimeMs": 1795128142701.2712
+  },
+  "element3/placeholderalbedo.png": {
+    "mtimeMs": 1795125172703.4539,
+    "size": 11980,
+    "outRel": "element3/placeholderalbedo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 59452,
+    "outMtimeMs": 1795128143508.4006
+  },
+  "element3/placeholderaor.png": {
+    "mtimeMs": 1795125172723.3777,
+    "size": 11980,
+    "outRel": "element3/placeholderaor.png",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 22893,
+    "outMtimeMs": 1795128143739.3562
+  },
+  "element3/placeholdernormal.png": {
+    "mtimeMs": 1795125172740.4941,
+    "size": 11980,
+    "outRel": "element3/placeholdernormal.png",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 22893,
+    "outMtimeMs": 1795128143951.5657
+  },
+  "element3/player.glb": {
+    "mtimeMs": 1795125172772.9502,
+    "size": 875176,
+    "outRel": "element3/player.glb",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 875176,
+    "outMtimeMs": 1795128144042.303
+  },
+  "element4/ambient.mp3": {
+    "mtimeMs": 1795125172834.252,
+    "size": 2267010,
+    "outRel": "element4/ambient.mp3",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 2267010,
+    "outMtimeMs": 1795128144089.7363
+  },
+  "element4/click.mp3": {
+    "mtimeMs": 1795125172846.7612,
+    "size": 12896,
+    "outRel": "element4/click.mp3",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 12896,
+    "outMtimeMs": 1795128144105.4788
+  },
+  "element4/collect.mp3": {
+    "mtimeMs": 1795125172859.279,
+    "size": 8554,
+    "outRel": "element4/collect.mp3",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 8554,
+    "outMtimeMs": 1795128144115.979
+  },
+  "shared/babylonjs_logo.webp": {
+    "mtimeMs": 1795125172898.765,
+    "size": 4262,
+    "outRel": "shared/babylonjs_logo.webp",
+    "tier": 10,
+    "max": 8192,
+    "ai": false,
+    "outSize": 192728,
+    "outMtimeMs": 1795128144655.5054
+  }
+}

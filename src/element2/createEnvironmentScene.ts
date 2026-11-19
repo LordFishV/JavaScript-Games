@@ -20,7 +20,6 @@ import { LoadAssetContainerAsync, TransformNode } from "@babylonjs/core";
 export default function createEnvironmentScene(engine: Engine) {
   const scene = new Scene(engine);
 
-  // 360-degree background image (equirectangular panorama, 2:1 ratio)
   new PhotoDome(
     "sky",
     assetUrl("assets/element2/sky360.hdr"),

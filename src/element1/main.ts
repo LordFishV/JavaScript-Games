@@ -1,22 +1,11 @@
 import "../shared/site";
 import createEngine from "../shared/createEngine";
-import createStartScene from "./createStartScene";
-import createRunScene from "./createRunScene";
+import createScene from "./createScene";
 
-function bootBabylon() {
-  // Double rAF guarantees the browser paints the navbar & completes the View Transition first
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      const { engine } = createEngine();
-      const startScene = createStartScene(engine);
-      createRunScene(startScene);
-      engine.runRenderLoop(() => startScene.scene.render());
-    });
-  });
+async function main() {
+  const { engine } = createEngine();
+  const { scene } = await createScene(engine); // async: Havok loads first
+  engine.runRenderLoop(() => scene.render());
 }
 
-if (document.readyState === "loading") {
-  window.addEventListener("DOMContentLoaded", bootBabylon);
-} else {
-  bootBabylon();
-}
+main().catch(console.error);
