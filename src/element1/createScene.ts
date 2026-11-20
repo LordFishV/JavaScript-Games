@@ -174,7 +174,7 @@ export default async function createScene(engine: Engine, audio: AudioManager) {
   focusLighting();
 
   // TODO: axial tilt: add another TransformNode between anchor and mesh and rotate it on z
-  // TODO: optional extras: orbit rings, a GlowLayer on the sun
+  // TODO: optional extras: orbit rings.
 
   // ===================================================================
   // SHADOWS
@@ -190,12 +190,10 @@ export default async function createScene(engine: Engine, audio: AudioManager) {
 
   for (const body of bodies) {
     // Skip the sun, so it doesn't block its own light
-    if (!body.groundMesh || body === sun || !body.cloudMesh) continue;
+    if (!body.groundMesh || body === sun) continue;
 
     shadowGenerator.addShadowCaster(body.groundMesh, true);
-    shadowGenerator.addShadowCaster(body.cloudMesh, true);
     body.groundMesh.receiveShadows = true;
-    body.cloudMesh.receiveShadows = true;
   }
 
   // ===================================================================
@@ -316,7 +314,6 @@ export default async function createScene(engine: Engine, audio: AudioManager) {
     host.orbitPivot.computeWorldMatrix(true);
     host.anchor.computeWorldMatrix(true);
     host.groundMesh.computeWorldMatrix(true);
-    host.cloudMesh?.computeWorldMatrix(true);
 
     const sunPos = sun.groundMesh.getAbsolutePosition();
     const hostPos = host.groundMesh.getAbsolutePosition();
