@@ -16,7 +16,7 @@ const CAPSULE_RADIUS = 0.5;
 const MODEL_SCALE = 1; // TODO: tune so the character matches the capsule's size
 
 export default async function createPlayer(scene: Scene, name: string) {
-  // 1. invisible capsule: this is what Havok simulates
+  // 1. invisible capsule for Havok simulation
   const holder = MeshBuilder.CreateCapsule(
     name,
     { height: CAPSULE_HEIGHT, radius: CAPSULE_RADIUS },
@@ -25,7 +25,7 @@ export default async function createPlayer(scene: Scene, name: string) {
   holder.position.y = 2; // start in the air so it isn't inside the ground
   holder.isVisible = false;
 
-  // create the physics body BEFORE parenting the model, so the capsule
+  // create the physics body before parenting the model, so the capsule
   // is sized from the capsule mesh alone
   const aggregate = new PhysicsAggregate(
     holder,

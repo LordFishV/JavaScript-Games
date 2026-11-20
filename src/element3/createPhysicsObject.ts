@@ -1,4 +1,4 @@
-import { Material, MeshBuilder, PBRMaterial, PhysicsAggregate, PhysicsShapeType, Texture, Vector3 } from "@babylonjs/core";
+import { MeshBuilder, PBRMaterial, PhysicsAggregate, PhysicsShapeType, Texture } from "@babylonjs/core";
 import type { Scene } from "@babylonjs/core";
 import { assetUrl } from "../shared/assetUrl";
 

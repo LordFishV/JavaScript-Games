@@ -1,7 +1,6 @@
-import { MeshBuilder, TransformNode, StandardMaterial, Texture, Color3, Mesh } from "@babylonjs/core";
-import type { Scene } from "@babylonjs/core";
+import { MeshBuilder, TransformNode, StandardMaterial, Mesh, Scene, Vector3 } from "@babylonjs/core";
 import type { CelestialBody } from "./interfaces";
-import { assetUrl } from "../shared/assetUrl";
+import { createStandardMaterial } from "../shared/createMaterial";
 
 export interface BodyOptions {
   name: string;
@@ -24,58 +23,56 @@ export default function createBody(scene: Scene, info: BodyOptions): CelestialBo
   anchor.parent = orbitPivot;
   anchor.position.x = info.distance; // standing off to one side of the pivot
 
-  const groundMesh = MeshBuilder.CreateSphere(info.name, { diameter: info.diameter, segments: 32 }, scene);
+  const groundMesh = MeshBuilder.CreateSphere(
+    info.name,
+    { diameter: info.diameter, segments: 32, },
+    scene
+  );
   groundMesh.parent = anchor;
-    // Ground Layer
-    const groundMat = new StandardMaterial(`${info.name}ground`, scene);
-    const diffuse = new Texture(assetUrl(`assets/element1/${info.name}albedo.webp`), scene);
-    const normal = new Texture(assetUrl(`assets/element1/${info.name}normal.png`), scene);
-    const specular = new Texture(assetUrl(`assets/element1/${info.name}specular.png`), scene);
+
+  // Ground Layer
+  const groundMaterial: StandardMaterial = info.isStar
+    ? createStandardMaterial(scene, {
+        name: info.name,
+        textureLocation: "assets/element1/",
+        textureName: info.name,
+        textureType: ".webp",
+        hasEmissive: true,
+      })
+    : createStandardMaterial(scene, {
+      name: info.name,
+      textureLocation: "assets/element1/",
+      textureName: info.name,
+      textureType: ".webp", // Default for albedo & specular
+      textureTypes: {
+      normal: ".png",     // Loads earthnormal.png instead of earthnormal.webp
+    },
+    hasNormal: info.hasNormal,
+    hasSpecular: info.hasSpecular,
+  });
 
 
-  if (info.isStar) {
-    groundMat.emissiveTexture = diffuse;
-    groundMat.disableLighting = true;
-    groundMat.specularColor = Color3.Black();
-  } else {
-    groundMat.diffuseTexture = diffuse;
+  groundMesh.material = groundMaterial;
 
-    // 1. Normal / Bump Map (adds mountain/terrain relief)
-    if (info.hasNormal) {
-      groundMat.bumpTexture = normal;
-      groundMat.bumpTexture.level = 1.0; // Increase or decrease (e.g., 0.5 to 2.0) to tune bump depth
-    }
+    let cloudMesh;
+  if (info.hasClouds) {
+    cloudMesh = MeshBuilder.CreateSphere(
+      `${info.name}cloud`,
+      { diameter: info.diameter * 1.015, segments: 32 },
+      scene
+    );
+    cloudMesh.parent = anchor;
 
-    // 2. Specular Map (makes oceans shine while keeping land matte)
-    if (info.hasSpecular) {
-      groundMat.specularTexture = specular;
-      groundMat.specularColor = new Color3(0.6, 0.6, 0.6); // Controls overall shine brightness
-      groundMat.specularPower = 32; // Higher = tighter, sharper sun glint on oceans
-    } else {
-      groundMat.specularColor = Color3.Black(); // Keep matte for planets without a specular map
-    }
+    const cloudMaterial = createStandardMaterial(scene, {
+      name: `${info.name}cloud`,
+      textureLocation: "assets/element1/",
+      textureName: `${info.name}cloud`,
+      textureType: ".webp",
+      hasTransparency: "RGB",
+    });
+
+    cloudMesh.material = cloudMaterial;
   }
-
-  groundMesh.material = groundMat;
-
-    let cloudMesh: Mesh | undefined;
-
-    if (info.hasClouds) {
-      cloudMesh = MeshBuilder.CreateSphere(`&{info.name}clouds`,
-        { diameter: info.diameter * 1.015, segments: 32 },
-        scene);
-      cloudMesh.parent = anchor;
-
-      const cloudMat = new StandardMaterial(`${info.name}CloudMat`, scene);
-      const cloudTex = new Texture(assetUrl(`assets/element1/${info.name}cloud.webp`), scene);
-      cloudTex.getAlphaFromRGB = true
-
-      cloudMat.diffuseTexture = cloudTex;
-      cloudMat.opacityTexture = cloudTex;
-
-      cloudMat.specularColor = Color3.Black(); // Prevents shiny plastic-looking clouds
-      cloudMesh.material = cloudMat;
-    }
 
   return {
     name: info.name,
