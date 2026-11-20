@@ -1,6 +1,6 @@
-import { MeshBuilder, PBRMaterial, PhysicsAggregate, PhysicsShapeType, Texture } from "@babylonjs/core";
+import { MeshBuilder, PhysicsAggregate, PhysicsShapeType } from "@babylonjs/core";
 import type { Scene } from "@babylonjs/core";
-import { assetUrl } from "../shared/assetUrl";
+import { createPbrMaterial } from "../shared/createMaterial";
 
 export interface PhysicsObjectOptions {
   name: string;
@@ -10,36 +10,36 @@ export interface PhysicsObjectOptions {
 }
 
 export default function createPhysicsObject(
-  scene: Scene, textureLocation: string, textureName: string, textureType: string,
-  { name, mass, friction = 0.5, restitution = 0.2 }: PhysicsObjectOptions
+  scene: Scene,
+  textureLocation: string,
+  info: PhysicsObjectOptions,
 ) {
-  const mesh = MeshBuilder.CreateBox(name, { size: 1 }, scene);
+  const mesh = MeshBuilder.CreateBox(info.name, { size: 1 }, scene);
   // start above the ground so it falls (y of at least 2 avoids spawning inside the ground)
   mesh.position.set(Math.random() * 10, 2 + Math.random() * 8, Math.random() * 10);
 
-  const mat = new PBRMaterial("physics", scene);
-  mat.albedoTexture = new Texture(assetUrl(`${textureLocation}${textureName}albedo${textureType}`));
-  mat.bumpTexture = new Texture(assetUrl(`${textureLocation}${textureName}normal${textureType}`));
-  mat.metallicTexture = new Texture(assetUrl(`${textureLocation}${textureName}aor${textureType}`));
-  mat.useAmbientOcclusionFromMetallicTextureRed;
-  mat.useRoughnessFromMetallicTextureGreen;
-  mat.metallic = 1;
-  console.log(mat.albedoTexture);
+  const mat = createPbrMaterial(scene, {
+    name: info.name,
+    textureLocation, // Uses "assets/element3/" passed from createScene
+    textureName: info.name,
+    textureType: ".webp",
+    textureTypes: {
+      normal: ".png",
+    }
+  });
 
   mesh.material = mat;
 
   const aggregate = new PhysicsAggregate(
     mesh,
     PhysicsShapeType.BOX,
-    { mass, friction, restitution },
+    { mass: info.mass, friction: info.friction, restitution: info.restitution },
     scene
   );
 
   aggregate.body.setCollisionCallbackEnabled(true);
   aggregate.body.getCollisionObservable().add((event) => {
-    // TODO: react to collisions (change colour, play a sound, update the GUI...)
-    // Log one event first to see what it contains, then remove the log:
-    // console.log(event);
+    // TODO: react to collisions
   });
 
   return { mesh, aggregate };

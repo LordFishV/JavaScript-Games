@@ -1,41 +1,57 @@
 import {
-  Scene, Engine, ArcRotateCamera, Vector3, TransformNode, PointLight, ShadowGenerator, PhotoDome, HemisphericLight,
+  Scene, Engine, ArcRotateCamera, Vector3, TransformNode, PointLight,
+  ShadowGenerator, PhotoDome, HemisphericLight, Clamp, DirectionalLight,
+  AbstractMesh, Color3,
 } from "@babylonjs/core";
 import createBody from "./createBody";
 import { assetUrl } from "../shared/assetUrl";
-import createInput from "../element3/createInput";
+import createInput from "../shared/createInput";
+import type { CelestialBody } from "./interfaces";
 
 export default async function createScene(engine: Engine) {
   const scene = new Scene(engine);
-
   // ---------- camera ----------
-  const camera = new ArcRotateCamera("cam", -Math.PI / 2, Math.PI / 3, 60, Vector3.Zero(), scene);
+  const camera = new ArcRotateCamera("cam", -Math.PI / 2, Math.PI / 3, 200, Vector3.Zero(), scene);
   camera.attachControl(true);
-  camera.lowerRadiusLimit = 50;
+  camera.lowerRadiusLimit = 0;
   camera.upperRadiusLimit = 900;
+  camera.minZ = 0.001;
+  camera.maxZ = 20000; // Ensures the 10000-size skyDome never clips either
+
 
   // ---------- the sun ----------
   const root = new TransformNode("solarSystem", scene);
-    const sun = createBody(scene, {
-    name: "sun", diameter: 218.234, distance: 0, orbitSpeed: 0, spinSpeed: 0.039, parent: root, isStar: true,
-  });
+  const sun = createBody(scene, {
+  name: "sun", diameter: 218.234, distance: 0, orbitSpeed: 0, spinSpeed: 0.039, parent: root, isStar: true,
+});
 
-  const sunLight = new PointLight("sunLight", Vector3.Zero(), scene);
-  sunLight.intensity = 1;
+  // ---------- sun point light: lights every body from the sun's real position ----------
+  const sunPoint = new PointLight("sunPoint", Vector3.Zero(), scene);
+  sunPoint.intensity = 1.5; // TODO: tune to match the old look
+
+  // Give sunLight a non-zero initial direction
+  const sunLight = new DirectionalLight("sunLight", new Vector3(1, 0, 0), scene);
+  sunLight.intensity = 1.5;
+
+  // Tighten the shadow frustum around the focused planet + its moons (e.g., 100x100 units)
+  sunLight.shadowFrustumSize = 60;
+  sunLight.shadowMinZ = 10;
+  sunLight.shadowMaxZ = 90;        
+  sunLight.autoCalcShadowZBounds = false;
 
   // ---------- ambient Light ----------
-  const ambientLight = new HemisphericLight(
-      "hemisphericLight",
-      new Vector3(1, 10, 0),
-      scene
-  );
-  ambientLight.intensity = 0.05;
+  const ambientLight = new HemisphericLight("ambientLight", new Vector3(0, 1, 0), scene);
+  ambientLight.intensity = 0.08;
+  ambientLight.diffuse = new Color3(0.6, 0.7, 1.0);      // Subtle cool starlight
+  ambientLight.groundColor = new Color3(0.2, 0.25, 0.4); // Faint bounce fill on shadow side
+  ambientLight.specular = Color3.Black();                // Prevent fake ambient highlights on the dark side
+
 
 // ---------- Sky Dome ----------
 const skyDome = new PhotoDome(
     "sky",
     assetUrl("assets/element1/sky360stars.webp"),
-    { resolution: 32, size: 2000 },
+    { resolution: 32, size: 10000 },
     scene
   );
   
@@ -150,32 +166,132 @@ const skyDome = new PhotoDome(
     neptune, triton
   );
 
+  // ---------- focus: which planet system the shadow light is aimed at ----------
+  let focus: CelestialBody = earth;
+
+  // a planet is its own host, a moon's host is the planet it orbits
+  function hostOf(body: CelestialBody): CelestialBody {
+    const parentBody = bodies.find((b) => b.anchor === body.orbitPivot.parent);
+    return parentBody && parentBody !== sun ? parentBody : body;
+  }
+
+  // the directional light only lights the focused planet and its moons;
+  // the point light lights everything else
+  function focusLighting() {
+    const host = hostOf(focus);
+    const group = bodies.filter((b) => hostOf(b) === host);
+    const meshes = group.flatMap((b) => (b.cloudMesh ? [b.groundMesh, b.cloudMesh] : [b.groundMesh]));
+
+    sunLight.includedOnlyMeshes = meshes;
+    sunPoint.excludedMeshes = [...meshes, sun.groundMesh]; // the sun is emissive, so no light on it
+  }
+  focusLighting();
+
   // TODO: axial tilt: add another TransformNode between anchor and mesh and rotate it on z
   // TODO: optional extras: orbit rings, a GlowLayer on the sun
 
-  const input = createInput(scene);
-
   // ---------- shadows ----------
-  const shadowGenerator = new ShadowGenerator(1024, sunLight);
-  // TODO: shadowGenerator.addShadowCaster(planetMesh) for each planet and moon (NOT the sun)
-  // TODO: planetMesh.receiveShadows = true for each body that should show shadows
+  const shadowGenerator = new ShadowGenerator(2048, sunLight);
+  shadowGenerator.usePercentageCloserFiltering = true;
+  shadowGenerator.filteringQuality = ShadowGenerator.QUALITY_HIGH;
+
+  // Keep linear bias tiny so small moons still cast shadows,
+  // and increase normalBias just enough to eliminate sphere surface banding:
+  shadowGenerator.bias = 0.00005;
+  shadowGenerator.normalBias = 0.02;
+
+  for (const body of bodies) {
+    // Skip the Sun so it doesn't block its own light
+    if (!body.groundMesh || body === sun) continue;
+
+    shadowGenerator.addShadowCaster(body.groundMesh, true);
+    body.groundMesh.receiveShadows = true;
+  }
+
+  let prevSunAngle: number | null = null; // the host planet's angle around the sun last frame
+
+  // ---------- planet lockon ----------
+  const input = createInput(scene);
+  // Map meshes back to their body (handles child meshes like clouds/rings too)
+  input.onMeshClick((pickedMesh) => {
+  const clickedBody = bodies.find(
+    (b) => b.groundMesh === pickedMesh || b.cloudMesh === pickedMesh
+  );
+  if (!clickedBody) return;
+
+  camera.lockedTarget = clickedBody.groundMesh;
+  prevSunAngle = null; // start tracking again from this target
+
+  if (clickedBody !== sun) {
+    focus = clickedBody;
+    focusLighting();
+
+    // optional: start on the sunlit side, with the sun behind the camera
+    const toSun = sun.groundMesh.getAbsolutePosition()
+      .subtract(clickedBody.groundMesh.getAbsolutePosition());
+    camera.alpha = Math.atan2(toSun.z, toSun.x);
+    camera.beta = Math.PI / 2.2; // a little above the orbital plane
+  }
+
+  const radius = clickedBody.groundMesh.getBoundingInfo().boundingSphere.radiusWorld;
+  camera.radius = Math.max(radius * 3, 5);
+});
+
+  let timeScale = 1;
 
   // ---------- runs every frame ----------
   scene.onBeforeRenderObservable.add(() => {
-    input.isDown("");
+    const deltaTime = scene.getEngine().getDeltaTime() / 1000;
 
-    const dt = scene.getEngine().getDeltaTime() / 1000; // seconds since the last frame
+    // 1. Update timeScale
+    const adaptiveStep = Math.max(0.05, Math.abs(timeScale) * 1.5) * deltaTime;
+    if (input.isDown("keya")) timeScale -= adaptiveStep;
+    if (input.isDown("keyd")) timeScale += adaptiveStep;
+    timeScale = Clamp(timeScale, -100, 100);
 
+    // 2. Rotate all bodies
     for (const body of bodies) {
-  body.orbitPivot.rotation.y += body.orbitSpeed * dt;
-  body.groundMesh.rotation.y += body.spinSpeed * dt;
-  
-  if (body.cloudMesh) {
-    body.cloudMesh.rotation.y += (body.spinSpeed * 1.15) * dt;
-  }
-}
+      body.orbitPivot.rotation.y += body.orbitSpeed * deltaTime * timeScale;
+      body.groundMesh.rotation.y += body.spinSpeed * deltaTime * timeScale;
+      if (body.cloudMesh) {
+        body.cloudMesh.rotation.y += body.spinSpeed * 1.15 * deltaTime * timeScale;
+      }
+    }
 
+    // 3. Aim the directional (shadow) light from the sun at the focused planet system
+    const host = hostOf(focus);
+    host.orbitPivot.computeWorldMatrix(true);
+    host.anchor.computeWorldMatrix(true);
+    host.groundMesh.computeWorldMatrix(true);
+
+    const sunPos = sun.groundMesh.getAbsolutePosition();
+    const hostPos = host.groundMesh.getAbsolutePosition();
+    const dir = hostPos.subtract(sunPos).normalize();
+    sunLight.direction = dir;
+    sunLight.position = hostPos.subtract(dir.scale(50));
+
+    // 4. Keep the camera's view of the target steady relative to the sun
+    const lockedBody = bodies.find((b) => b.groundMesh === camera.lockedTarget);
+    if (lockedBody && lockedBody !== sun) {
+      // refresh the locked body itself, so the camera never reads last frame's position
+      lockedBody.orbitPivot.computeWorldMatrix(true);
+      lockedBody.anchor.computeWorldMatrix(true);
+      lockedBody.groundMesh.computeWorldMatrix(true);
+
+      // follow the HOST planet's travel around the sun (a moon's own fast orbit would make this spin wildly)
+      const rel = host.groundMesh.getAbsolutePosition().subtract(sunPos);
+      const angle = Math.atan2(rel.z, rel.x);
+
+      if (prevSunAngle !== null) {
+        let delta = angle - prevSunAngle;
+        delta = Math.atan2(Math.sin(delta), Math.cos(delta)); // wrap to -PI..PI
+        camera.alpha += delta;
+      }
+      prevSunAngle = angle;
+    } else {
+      prevSunAngle = null; // sun locked or nothing locked: nothing to follow
+    }
   });
+
   return { scene, camera, sunLight, ambientLight, bodies, shadowGenerator };
-  // TODO: optional: move the light's intensity, or react to keys to speed up and slow down time
 }

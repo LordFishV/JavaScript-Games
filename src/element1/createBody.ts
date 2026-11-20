@@ -1,4 +1,4 @@
-import { MeshBuilder, TransformNode, StandardMaterial, Mesh, Scene, Vector3 } from "@babylonjs/core";
+import { MeshBuilder, TransformNode, StandardMaterial, Scene, Color3 } from "@babylonjs/core";
 import type { CelestialBody } from "./interfaces";
 import { createStandardMaterial } from "../shared/createMaterial";
 
@@ -8,6 +8,7 @@ export interface BodyOptions {
   distance: number;      // The distance from whatever it orbits
   orbitSpeed: number;
   spinSpeed: number;
+  meshResolution?: number;
   parent: TransformNode; // The object it orbits (the sun's anchor or a planet's anchor)
   isStar?: boolean;
   hasClouds?: boolean;
@@ -25,7 +26,7 @@ export default function createBody(scene: Scene, info: BodyOptions): CelestialBo
 
   const groundMesh = MeshBuilder.CreateSphere(
     info.name,
-    { diameter: info.diameter, segments: 32, },
+    { diameter: info.diameter, segments: info.meshResolution },
     scene
   );
   groundMesh.parent = anchor;
@@ -38,6 +39,7 @@ export default function createBody(scene: Scene, info: BodyOptions): CelestialBo
         textureName: info.name,
         textureType: ".webp",
         hasEmissive: true,
+        emissiveIntensity: 1.5,
       })
     : createStandardMaterial(scene, {
       name: info.name,
@@ -58,7 +60,7 @@ export default function createBody(scene: Scene, info: BodyOptions): CelestialBo
   if (info.hasClouds) {
     cloudMesh = MeshBuilder.CreateSphere(
       `${info.name}cloud`,
-      { diameter: info.diameter * 1.015, segments: 32 },
+      { diameter: info.diameter * 1.015, segments: info.meshResolution },
       scene
     );
     cloudMesh.parent = anchor;

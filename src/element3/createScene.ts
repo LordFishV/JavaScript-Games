@@ -12,7 +12,7 @@ import {
   AnimationGroup,
 } from "@babylonjs/core";
 import createPhysics from "./createPhysics";
-import createInput from "./createInput";
+import createInput from "../shared/createInput";
 import createPlayer from "./createPlayer";
 import createPhysicsObject from "./createPhysicsObject";
 
@@ -51,20 +51,13 @@ export default async function createScene(engine: Engine) {
   camera.attachControl(true);
 
   // ---------- physics objects ----------
-  const boxes = [
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box1", mass: 1 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box2", mass: 0.5 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box3", mass: 10 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box1", mass: 1 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box2", mass: 0.5 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box3", mass: 10 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box1", mass: 1 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box2", mass: 0.5 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box3", mass: 10 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box1", mass: 1 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box2", mass: 0.5 }),
-    createPhysicsObject(scene, "assets/element3/", "placeholder", ".png", { name: "box3", mass: 10 }),
+   const boxTypes: PhysicsObjectOptions[] = [
+    { name: "box", mass: 1 },
   ];
+
+  const boxes = Array.from({ length: 100 }, (_, i) => // length equals the amount of boxes to spawn
+    createPhysicsObject(scene, "assets/element3/", boxTypes[i % boxTypes.length])
+  );
 
 // ---------- animations ----------
 const find = (word: string) =>
