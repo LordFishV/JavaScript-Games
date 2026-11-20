@@ -14,6 +14,7 @@ export interface BodyOptions {
   hasClouds?: boolean;
   hasNormal?: boolean;
   hasSpecular?: boolean;
+  hasEmissive?: boolean;
 }
 
 export default function createBody(scene: Scene, info: BodyOptions): CelestialBody {
@@ -38,13 +39,14 @@ export default function createBody(scene: Scene, info: BodyOptions): CelestialBo
         textureLocation: "assets/element1/",
         textureName: info.name,
         textureType: ".webp",
-        hasEmissive: true,
+        hasEmissive: info.hasEmissive,
         emissiveIntensity: 1.5,
       })
     : createStandardMaterial(scene, {
       name: info.name,
       textureLocation: "assets/element1/",
       textureName: info.name,
+      hasEmissive: info.hasEmissive,
       textureType: ".webp", // Default for albedo & specular
       textureTypes: {
       normal: ".png",     // Loads earthnormal.png instead of earthnormal.webp
@@ -60,7 +62,7 @@ export default function createBody(scene: Scene, info: BodyOptions): CelestialBo
   if (info.hasClouds) {
     cloudMesh = MeshBuilder.CreateSphere(
       `${info.name}cloud`,
-      { diameter: info.diameter * 1.015, segments: info.meshResolution },
+      { diameter: info.diameter * 1.03, segments: info.meshResolution },
       scene
     );
     cloudMesh.parent = anchor;

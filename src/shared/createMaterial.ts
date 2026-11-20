@@ -77,10 +77,13 @@ function getTexture(scene: Scene, info: MaterialOptions, suffix: TextureType | "
   const rawExt = info.textureTypes?.[lookupKey] ?? info.textureType;
   const ext = rawExt.startsWith(".") ? rawExt : `.${rawExt}`;
 
-  return new Texture(
+  const texture = new Texture(
     assetUrl(`${info.textureLocation}${info.textureName}${suffix}${ext}`),
     scene
   );
+  texture.vScale = -1;
+
+  return texture;
 }
 
 export function createStandardMaterial(scene: Scene, info: MaterialOptions): StandardMaterial {

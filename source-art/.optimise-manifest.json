@@ -1,0 +1,182 @@
+{
+  "element1/earthalbedo.webp": {
+    "mtimeMs": 1795184549992.328,
+    "size": 80342,
+    "outRel": "element1/earthalbedo.webp",
+    "tier": 5
+  },
+  "element1/earthcloud.webp": {
+    "mtimeMs": 1795184550019.2495,
+    "size": 579054,
+    "outRel": "element1/earthcloud.webp",
+    "tier": 5
+  },
+  "element1/earthcloudalbedo.webp": {
+    "mtimeMs": 1795184550040.1345,
+    "size": 579054,
+    "outRel": "element1/earthcloudalbedo.webp",
+    "tier": 5
+  },
+  "element1/earthnormal.png": {
+    "mtimeMs": 1795184550062.722,
+    "size": 298788,
+    "outRel": "element1/earthnormal.png",
+    "tier": 5
+  },
+  "element1/jupiteralbedo.webp": {
+    "mtimeMs": 1795184550081.4917,
+    "size": 328072,
+    "outRel": "element1/jupiteralbedo.webp",
+    "tier": 5
+  },
+  "element1/marsalbedo.webp": {
+    "mtimeMs": 1795184550102.9502,
+    "size": 546960,
+    "outRel": "element1/marsalbedo.webp",
+    "tier": 5
+  },
+  "element1/mercuryalbedo.webp": {
+    "mtimeMs": 1795184550124.9746,
+    "size": 790666,
+    "outRel": "element1/mercuryalbedo.webp",
+    "tier": 5
+  },
+  "element1/moonalbedo.png": {
+    "mtimeMs": 1795184550218.9182,
+    "size": 5405580,
+    "outRel": "element1/moonalbedo.webp",
+    "tier": 5
+  },
+  "element1/moonnormal.png": {
+    "mtimeMs": 1795184550449.289,
+    "size": 14435895,
+    "outRel": "element1/moonnormal.png",
+    "tier": 5
+  },
+  "element1/neptunealbedo.webp": {
+    "mtimeMs": 1795184550460.4094,
+    "size": 85698,
+    "outRel": "element1/neptunealbedo.webp",
+    "tier": 5
+  },
+  "element1/saturnalbedo.webp": {
+    "mtimeMs": 1795184550474.725,
+    "size": 96582,
+    "outRel": "element1/saturnalbedo.webp",
+    "tier": 5
+  },
+  "element1/sky360stars.webp": {
+    "mtimeMs": 1795184550490.8108,
+    "size": 268512,
+    "outRel": "element1/sky360stars.webp",
+    "tier": 5
+  },
+  "element1/sunalbedo.webp": {
+    "mtimeMs": 1795184550513.7087,
+    "size": 660228,
+    "outRel": "element1/sunalbedo.webp",
+    "tier": 5
+  },
+  "element1/uranusalbedo.webp": {
+    "mtimeMs": 1795184550522.7532,
+    "size": 18970,
+    "outRel": "element1/uranusalbedo.webp",
+    "tier": 5
+  },
+  "element1/venusalbedo.webp": {
+    "mtimeMs": 1795184550539.251,
+    "size": 122070,
+    "outRel": "element1/venusalbedo.webp",
+    "tier": 5
+  },
+  "element2/colour.webp": {
+    "mtimeMs": 1795184550560.6074,
+    "size": 325284,
+    "outRel": "element2/colour.webp",
+    "tier": 5
+  },
+  "element2/heightmap.png": {
+    "mtimeMs": 1795184550599.9355,
+    "size": 1062767,
+    "outRel": "element2/heightmap.png",
+    "tier": 5
+  },
+  "element2/horse.glb": {
+    "mtimeMs": 1795184550635.1572,
+    "size": 1363660,
+    "outRel": "element2/horse.glb",
+    "tier": 5
+  },
+  "element2/house.glb": {
+    "mtimeMs": 1795184550668.8591,
+    "size": 1135400,
+    "outRel": "element2/house.glb",
+    "tier": 5
+  },
+  "element2/normalmap.webp": {
+    "mtimeMs": 1795184550706.2534,
+    "size": 1455260,
+    "outRel": "element2/normalmap.webp",
+    "tier": 5
+  },
+  "element2/rockaor.webp": {
+    "mtimeMs": 1795184550739.2349,
+    "size": 1214498,
+    "outRel": "element2/rockaor.webp",
+    "tier": 5
+  },
+  "element2/rockcolour.webp": {
+    "mtimeMs": 1795184550749.2788,
+    "size": 86350,
+    "outRel": "element2/rockcolour.webp",
+    "tier": 5
+  },
+  "element2/rocknormal.webp": {
+    "mtimeMs": 1795184550788.919,
+    "size": 1819396,
+    "outRel": "element2/rocknormal.webp",
+    "tier": 5
+  },
+  "element2/sky360.hdr": {
+    "mtimeMs": 1795184550818.0042,
+    "size": 639202,
+    "outRel": "element2/sky360.hdr",
+    "tier": 5
+  },
+  "element2/tree.glb": {
+    "mtimeMs": 1795184550830.8938,
+    "size": 84196,
+    "outRel": "element2/tree.glb",
+    "tier": 5
+  },
+  "element3/player.glb": {
+    "mtimeMs": 1795184550860.6633,
+    "size": 498596,
+    "outRel": "element3/player.glb",
+    "tier": 5
+  },
+  "element4/ambient.mp3": {
+    "mtimeMs": 1795184550918.9128,
+    "size": 2267010,
+    "outRel": "element4/ambient.mp3",
+    "tier": 5
+  },
+  "element4/click.mp3": {
+    "mtimeMs": 1795184550931.7588,
+    "size": 12896,
+    "outRel": "element4/click.mp3",
+    "tier": 5
+  },
+  "element4/collect.mp3": {
+    "mtimeMs": 1795184550939.1406,
+    "size": 8554,
+    "outRel": "element4/collect.mp3",
+    "tier": 5
+  },
+  "shared/babylonjs_logo.webp": {
+    "mtimeMs": 1795184550978.9304,
+    "size": 4262,
+    "outRel": "shared/babylonjs_logo.webp",
+    "tier": 5
+  }
+}
